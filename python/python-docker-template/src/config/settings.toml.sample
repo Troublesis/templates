@@ -1,0 +1,9 @@
+[default]
+test="TEST"
+
+[production]
+DEBUG = false
+
+[bark]
+url = "https://api.day.app"
+apikey = "enter_your_api"

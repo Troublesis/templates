@@ -1,0 +1,28 @@
+---
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - name: Install pre-commit hooks
+        run: |
+          python -m pip install pre-commit
+          pre-commit install
+          # Install hadolint
+      - name: Install hadolint
+        run: |
+          wget -O /usr/local/bin/hadolint \
+          https://github.com/hadolint/hadolint/releases/download/v2.10.0/hadolint-Linux-x86_64
+          chmod +x /usr/local/bin/hadolint
+      - name: Run pre-commit hooks
+        run: pre-commit run --all-files

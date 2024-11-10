@@ -1,0 +1,43 @@
+FROM python:3.9.19-alpine3.19
+
+LABEL maintainer="bamboo5320@gmail.com"
+
+# Set working directory
+WORKDIR /app
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    POETRY_VERSION=1.8.3 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_NO_INTERACTION=1
+
+# Install system dependencies and Poetry
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    && pip install "poetry==$POETRY_VERSION"
+
+# Copy only dependency files first
+COPY pyproject.toml poetry.lock ./
+
+# Install dependencies
+RUN poetry config virtualenvs.create true \
+    && poetry install --no-root --only main
+
+# Copy application code
+COPY ./ ./
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
+# Use the virtual environment
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Command to run the application
+# CMD ["python", "src/main.py"]

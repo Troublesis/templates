@@ -1,0 +1,10 @@
+.secrets.toml
+settings.toml
+logs/
+@eaDir/
+data/
+.DS_Store
+**/__pycache__/
+node_modules/
+.venv/
+.env

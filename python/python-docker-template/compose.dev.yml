@@ -1,0 +1,31 @@
+---
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE:-Dockerfile.dev}
+      args:
+        - POETRY_VERSION=${POETRY_VERSION:-1.8.3}
+      cache_from:
+        - ${PROJECT_NAME}:${VERSION}
+    image: ${PROJECT_NAME}:${VERSION}
+
+    container_name: ${PROJECT_NAME}
+    environment:
+      - DEBUG=true
+    working_dir: /app
+    volumes:
+      - ./:/app
+    # command: python src/main.py
+    env_file:
+      - .env
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 15.100.0.0/16

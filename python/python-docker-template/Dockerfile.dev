@@ -1,0 +1,43 @@
+FROM python:3.9.19-alpine3.19 AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Set only build-relevant environment variables
+ENV PIP_NO_CACHE_DIR=1 \
+    POETRY_VERSION=1.8.3 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_VIRTUALENVS_IN_PROJECT=false \
+    POETRY_NO_INTERACTION=1
+
+# Install system dependencies and Poetry in a single layer
+RUN apk add --no-cache gcc musl-dev libffi-dev \
+    && pip install "poetry==$POETRY_VERSION"
+
+# Copy only dependency files
+COPY pyproject.toml poetry.lock ./
+
+# Install dependencies directly to system Python and cleanup in the same layer
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-root --only main \
+    && rm -rf /root/.cache/pip/* \
+    && rm -rf /root/.cache/poetry/* \
+    && rm -rf /var/cache/apk/*
+
+# Production image
+FROM python:3.9.19-alpine3.19
+
+LABEL maintainer="bamboo5320@gmail.com"
+
+# Set working directory and runtime environment variables
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
+# Copy application code and dependencies
+COPY ./ ./
+COPY --from=builder /usr/local/lib/python3.9/site-packages/ /usr/local/lib/python3.9/site-packages/
+
+# Command to run the application
+# CMD ["python", "src/main.py"]

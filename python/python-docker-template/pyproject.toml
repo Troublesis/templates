@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "python-docker-template"
+version = "0.0.0"
+description = ""
+authors = ["troublesis <bamboo5320@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+requests = "^2.32.3"
+dynaconf = "^3.2.6"
+loguru = "^0.7.2"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.0.1"
+commitizen = "^3.30.0"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
+update_changelog_on_bump = true
+version_files = [
+    "pyproject.toml:version"
+]
+style = [
+    ["qmark", "fg:#ff9d00 bold"],
+    ["question", "bold"],
+    ["answer", "fg:#ff9d00 bold"],
+    ["pointer", "fg:#ff9d00 bold"],
+    ["highlighted", "fg:#ff9d00 bold"],
+    ["selected", "fg:#cc5454"],
+    ["separator", "fg:#cc5454"],
+    ["instruction", ""]
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
